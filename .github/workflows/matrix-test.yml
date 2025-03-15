@@ -11,6 +11,12 @@ jobs:
     outputs:
       mymatrix: ${{ steps.dataStep.outputs.myoutput }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: List directory contents
+        run: ls -la
+        
       - id: dataStep
         run: |
           ls ${{ github.workspace }}
