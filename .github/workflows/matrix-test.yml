@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       mymatrix: ${{ steps.dataStep.outputs.myoutput }}
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}  # Set default working directory to root
     steps:
       - id: dataStep
         run: |
@@ -21,5 +24,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJson(needs.setup.outputs.mymatrix) }}
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}  # Set default working directory to root
     steps:
-      - run: echo ${{matrix.target}}
+      - run: echo ${{ matrix.target }}
