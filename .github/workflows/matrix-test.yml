@@ -13,11 +13,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
-      - name: List directory contents
-        run: ls -la
-        
-      - id: dataStep
         run: |
           ls ${{ github.workspace }}
           TARGETS=$(ls -d ${{ github.workspace }}/packages/* | xargs -n 1 basename | jq -R . | jq -s .)
