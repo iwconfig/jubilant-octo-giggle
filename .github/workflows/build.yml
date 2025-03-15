@@ -14,26 +14,29 @@ jobs:
       matrix:
         os-version: ["debian:sid"]
         arch: ["amd64", "arm64"]
+    # container:
+    #   image: ${{ matrix.os-version }}  # Use the specified Debian image as the container
     steps:
-      - uses: actions/checkout@v4
+      # - uses: actions/checkout@v4
 
-      - name: Set up environment
-        run: |
-          if [ -f /etc/apt/sources.list.d/debian.sources ]; then
-              cat /etc/apt/sources.list.d/debian.sources
-              sudo sed -i '/^Types:/ s/$/ deb-src/' /etc/apt/sources.list.d/debian.sources
-          else
-              cat /etc/apt/sources.list
-              echo "deb-src https://deb.debian.org/debian/ sid main" | sudo tee /etc/apt/sources.list
-          fi
-          sudo apt-get update
-          sudo apt-get install -y build-essential devscripts debhelper dh-make
+      # - name: Set up environment
+      #   run: |
+      #     if [ -f /etc/apt/sources.list.d/debian.sources ]; then
+      #         sed -i '/^Types:/ s/$/ deb-src/' /etc/apt/sources.list.d/debian.sources
+      #         cat /etc/apt/sources.list.d/debian.sources
+      #     else
+      #         echo "deb-src https://deb.debian.org/debian/ sid main" | tee /etc/apt/sources.list
+      #         cat /etc/apt/sources.list
 
-      - name: Download PipeWire Source
-        run: |
-          apt-get source pipewire
-          cd pipewire-*  # Change to the downloaded source directory
-          echo "bluez5-codec-aac=enabled" >> debian/flags
+      #     fi
+      #     apt-get update
+      #     apt-get install -y build-essential devscripts debhelper dh-make
+
+      # - name: Download PipeWire Source
+      #   run: |
+      #     apt-get source pipewire
+      #     cd pipewire-*  # Change to the downloaded source directory
+      #     echo "bluez5-codec-aac=enabled" >> debian/flags
 
       - name: Build PipeWire Package
         uses: jtdor/build-deb-action@v1
@@ -42,7 +45,20 @@ jobs:
         with:
           docker-image: "${{ matrix.os-version }}"
           host-arch: "${{ matrix.arch }}"
-          extra-build-deps: devscripts git dpkg-cross
+          setup-hook: |
+            if [ -f /etc/apt/sources.list.d/debian.sources ]; then
+                sed -i '/^Types:/ s/$/ deb-src/' /etc/apt/sources.list.d/debian.sources
+                cat /etc/apt/sources.list.d/debian.sources
+            else
+                echo "deb-src https://deb.debian.org/debian/ sid main" | tee /etc/apt/sources.list
+                cat /etc/apt/sources.list
+            fi
+            apt-get update
+            apt-get install -y build-essential devscripts debhelper dh-make 
+            apt-get source pipewire
+            cd pipewire-*  # Change to the downloaded source directory
+            echo "bluez5-codec-aac=enabled" >> debian/flags
+          # extra-build-deps: devscripts git dpkg-cross
           before-build-hook: "dch --local ~${{ github.run_number }} 'GitHub build for PipeWire with AAC Codec'"
           buildpackage-opts: --build=binary --no-sign -d
 
