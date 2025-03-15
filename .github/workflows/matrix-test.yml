@@ -13,6 +13,7 @@ jobs:
     steps:
       - id: dataStep
         run: |
+          ls ${{ github.workspace }}
           TARGETS=$(ls -d ${{ github.workspace }}/packages/* | xargs -n 1 basename | jq -R . | jq -s .)
           echo "myoutput=$(jq -cn --argjson environments "$TARGETS" '{target: $environments}')" >> $GITHUB_OUTPUT
 
