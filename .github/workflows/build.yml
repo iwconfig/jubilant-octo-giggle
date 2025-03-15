@@ -14,6 +14,10 @@ jobs:
       matrix:
         os-version: ["debian:sid"]
         arch: ["amd64", "arm64"]
+
+        package: 
+          - gnome-shell-48~rc
+          - pipewire-1.4.1
     # container:
     #   image: ${{ matrix.os-version }}  # Use the specified Debian image as the container
     steps:

@@ -1,0 +1,25 @@
+name: Dynamic Matrix
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: List directories and set matrix
+      id: set-matrix
+      run: |
+        echo "package=$(ls -d packages/* | xargs -n 1 basename | jq -R . | jq -s .)" >> $GITHUB_ENV
+
+    - name: Print matrix
+      run: echo ${{ env.package }}
+
+    - name: Use matrix
+      run: echo "Package: ${{ matrix.package }}"
+      strategy:
+        matrix:
+          package: ${{ fromJson(env.package) }}
