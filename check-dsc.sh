@@ -112,12 +112,13 @@ else
     # head -v "$PWD/$EXISTING_DIR"/$DSC_FILE
     # head -v "$EXISTING_DIR"/$DSC_FILE
     # DEB_VERSION=$(awk '/^Version: /{print $2}' "$PWD/$EXISTING_DIR"/$DSC_FILE)
-    DEB_VERSION=1.4.1-1
-    VERSION=$(echo $DEB_VERSION | cut -d'-' -f1)
 
-    echo "DEB_VERSION: $DEB_VERSION"
-    echo "VERSION: $VERSION"
+    # DEB_VERSION=1.4.1-1
+    # VERSION=$(echo $DEB_VERSION | cut -d'-' -f1)
 
-    mv -v "$BUILD_DIR/$PACKAGE_NAME-$VERSION/" "$BUILD_DIR/$PACKAGE_NAME"
+    # echo "DEB_VERSION: $DEB_VERSION"
+    # echo "VERSION: $VERSION"
+
+    # mv -v "$BUILD_DIR/$PACKAGE_NAME-$VERSION/" "$BUILD_DIR/$PACKAGE_NAME"
 
 fi

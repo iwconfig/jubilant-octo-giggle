@@ -89,12 +89,15 @@ jobs:
             # DEB_VERSION=$(awk '/^Version: /{print $2}' ./build/)
             # VERSION=$(echo $DEB_VERSION | cut -d'-' -f1)
 
+            DEB_VERSION=1.4.1-1
+            VERSION=$(echo $DEB_VERSION | cut -d'-' -f1)        
+
             # echo "DEB_VERSION: $DEB_VERSION"
             # echo "VERSION: $VERSION"
 
             # export INPUT_SOURCE_DIR="$PWD/${{ matrix.package }}-$VERSION"
 
-            # mv -v ./build/${{ matrix.package }}-$VERSION/ ./build/${{ matrix.package }}
+            mv -v ./build/${{ matrix.package }}-$VERSION/ ./build/${{ matrix.package }}
             # apt build-dep -y ${{ matrix.package }}
 
             # apt-get source pipewire
