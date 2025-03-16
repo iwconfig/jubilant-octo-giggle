@@ -86,7 +86,10 @@ jobs:
             bash check-dsc.sh ${{ matrix.package }} ./packages ./build
 
             DEB_VERSION=$(apt-cache madison ${{ matrix.package }} | awk '{print $3}')
-            VERSION=$(apt-cache madison ${{ matrix.package }} | awk '{print $3}' | cut -d'-' -f1)
+            VERSION=$(echo $DEB_VERSION| cut -d'-' -f1)
+
+            echo "DEB_VERSION: $DEB_VERSION"
+            echo "VERSION: $VERSION"
 
             # export INPUT_SOURCE_DIR="$PWD/${{ matrix.package }}-$VERSION"
 
