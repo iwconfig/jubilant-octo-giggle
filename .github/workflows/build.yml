@@ -103,6 +103,10 @@ jobs:
           # before-build-hook: "dch --local ~${{ github.run_number }} 'GitHub build for PipeWire with AAC Codec'"rw
           buildpackage-opts: --build=binary --no-sign -d
 
+      - name: Rename deb file for upload
+        run: |
+          mv ./debian/artifacts/pipewire_1.4.1-1_amd64.deb ./debian/artifacts/pipewire_1.4.1-1.deb
+        
       - name: Upload deb files
         uses: actions/upload-artifact@v4
         with:
@@ -151,7 +155,7 @@ jobs:
             bookworm
           file: |
             *.deb
-          version_by_filename: false
+          version_by_filename: true
           private_key: ${{ secrets.APT_SIGNING_KEY }}
           public_key: ${{ vars.APT_PUBLIC_KEY }}
           key_passphrase: ""
