@@ -82,7 +82,7 @@ jobs:
             fi
             cd $GITHUB_WORKSPACE
             apt-get update
-            apt-get install -y wget #build-essential devscripts debhelper dh-make
+            apt-get install -y devscripts wget #build-essential  debhelper dh-make
             bash check-dsc.sh ${{ matrix.package }} ./packages ./build
 
             # DEB_VERSION=$(apt-cache madison ${{ matrix.package }} | awk '{print $3}')
