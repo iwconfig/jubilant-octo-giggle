@@ -20,9 +20,13 @@ jobs:
 
       - id: matrix_setup
         run: |
-          PACKAGES=$(ls -d ${{ github.workspace }}/packages/* | xargs -n 1 basename | jq -R . | jq -s .)
-          DISTS=$(echo debian:{sid,bookworm}-slim | jq -R 'split(" ")')
-          ARCHS=$(echo amd64 arm64 | jq -R 'split(" ")')
+          # PACKAGES=$(ls -d ${{ github.workspace }}/packages/* | xargs -n 1 basename | jq -R . | jq -s .)
+          # DISTS=$(echo debian:{sid,bookworm}-slim | jq -R 'split(" ")')
+          # ARCHS=$(echo amd64 arm64 | jq -R 'split(" ")')
+
+          PACKAGES=$(echo pipewire | jq -R 'split(" ")')
+          DISTS=$(echo debian:sid-slim | jq -R 'split(" ")')
+          ARCHS=$(echo amd64 | jq -R 'split(" ")')
           echo "build=$(
             jq -cn --argjson p "$PACKAGES" \
                    --argjson d "$DISTS" \
@@ -59,7 +63,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Build PipeWire Package
+      - name: Build ${{ matrix.package }} Package
         uses: jtdor/build-deb-action@v1
         env:
           DEB_BUILD_OPTIONS: noautodbgsym
@@ -88,7 +92,7 @@ jobs:
       - name: Upload deb files
         uses: actions/upload-artifact@v4
         with:
-          name: "pipewire-packages-${{ matrix.arch }}"
+          name: "${{ matrix.package }}-${{ matrix.arch }}"
           path: ./debian/artifacts/*
 
   merge-artefacts:
@@ -130,6 +134,7 @@ jobs:
             arm64
           repo_supported_version: |
             sid
+            bookworm
           file: |
             *.deb
           version_by_filename: true
