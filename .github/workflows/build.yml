@@ -91,7 +91,9 @@ jobs:
             mv -v ./build/${{ matrix.package }}-$VERSION/ ./build/${{ matrix.package }}
             # apt build-dep -y ${{ matrix.package }}
 
-            echo PWD=${PWD}
+            echo GITHUB_WORKSPACE: $GITHUB_WORKSPACE
+
+            echo PWD: $PWD
             ls -l $PWD
             echo ./build
             ls -l ./build
