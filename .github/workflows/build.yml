@@ -151,7 +151,7 @@ jobs:
             bookworm
           file: |
             *.deb
-          version_by_filename: true
+          version_by_filename: false
           private_key: ${{ secrets.APT_SIGNING_KEY }}
           public_key: ${{ vars.APT_PUBLIC_KEY }}
           key_passphrase: ""
