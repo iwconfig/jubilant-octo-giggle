@@ -1,0 +1,96 @@
+
+# yamllint disable rule:truthy
+on:
+  release:
+    types:
+      - published
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+env:
+  REPO_NAME: jubilant-octo-giggle
+  CODENAME: sid
+  COMPONENTS: main
+  ARCHITECTURES: amd64 arm64
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      artifact_id: ${{ steps.upload-artifact.outputs.artifact-id }}
+      keyring: ${{ steps.create-apt-repo.outputs.keyring }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      # - name: Create packages
+      #   run: |
+      #     head -v /etc/apt/sources.list.d/debian.sources /etc/apt/sources.list
+      #     ls -l /etc/apt/sources.list.d/
+
+      - name: Build ${{ matrix.package }} Package
+        uses: jtdor/build-deb-action@v1
+        env:
+          DEB_BUILD_OPTIONS: noautodbgsym
+        with:
+          docker-image: "${{ matrix.os-version }}"
+          host-arch: "${{ matrix.arch }}"
+          source-dir: "build/${{ matrix.package }}"
+          setup-hook: |
+            set -v
+            if [ -f /etc/apt/sources.list.d/debian.sources ]; then
+                sed -i '/^Types:/ s/$/ deb-src/' /etc/apt/sources.list.d/debian.sources
+                cat /etc/apt/sources.list.d/debian.sources
+            else
+                echo "deb-src https://deb.debian.org/debian/ sid main" | tee /etc/apt/sources.list
+                cat /etc/apt/sources.list
+            fi
+            cd $GITHUB_WORKSPACE
+            apt-get -qq update
+            apt-get -qq install -y devscripts wget
+            bash check-dsc.sh ${{ matrix.package }} ./packages ./build
+
+            DEB_VERSION=1.4.1-1
+            VERSION=$(echo $DEB_VERSION | cut -d'-' -f1)        
+
+            mv -v ./build/${{ matrix.package }}-$VERSION/ ./build/${{ matrix.package }}
+
+          extra-build-deps: devscripts git dpkg-cross
+          # before-build-hook: "dch --local ~${{ github.run_number }} 'GitHub build for PipeWire with AAC Codec'"rw
+          buildpackage-opts: --build=binary --no-sign -d
+
+      - uses: morph027/apt-repo-action@v2
+        id: create-apt-repo
+        with:
+          repo-name: ${{ env.REPO_NAME }}
+          signing-key: ${{ secrets.SIGNING_KEY }}
+          codename: ${{ env.CODENAME }}
+          components: ${{ env.COMPONENTS }}
+          architectures: ${{ env.ARCHITECTURES }}
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          name: github-pages
+          path: ${{ steps.create-apt-repo.outputs.dir }}
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Adding summary
+        run: |
+          echo ':rocket:' >> $GITHUB_STEP_SUMMARY
+          echo '' >> $GITHUB_STEP_SUMMARY
+          echo '```bash' >> $GITHUB_STEP_SUMMARY
+          echo 'curl -sfLo /etc/apt.trusted.gpg.d/${{ needs.build.outputs.keyring }}.asc ${{ steps.deploy-pages.outputs.page_url }}gpg.key' >> $GITHUB_STEP_SUMMARY
+          echo 'echo "deb ${{ steps.deploy-pages.outputs.page_url }} ${{ env.CODENAME }} ${{ env.COMPONENTS }}" >/etc/apt/sources.list.d/${{ env.REPO_NAME }}.list' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
