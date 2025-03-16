@@ -85,7 +85,9 @@ jobs:
             apt-get install -y build-essential devscripts debhelper dh-make wget
             bash check-dsc.sh ${{ matrix.package }} ./packages ./build
 
-            VERSION=$(apt-cache madison pipewire | awk '{print $3}')
+            DEB_VERSION=$(apt-cache madison ${{ matrix.package }} | awk '{print $3}')
+            VERSION=$(apt-cache madison ${{ matrix.package }} | awk '{print $3}' | cut -d'-' -f1)
+
             # export INPUT_SOURCE_DIR="$PWD/${{ matrix.package }}-$VERSION"
 
             mv -v ./build/${{ matrix.package }}-$VERSION/ ./build/${{ matrix.package }}
