@@ -70,7 +70,7 @@ jobs:
         with:
           docker-image: "${{ matrix.os-version }}"
           host-arch: "${{ matrix.arch }}"
-          source-dir: "${{ github.workspace }}/build"
+          source-dir: "./build"
           setup-hook: |
             if [ -f /etc/apt/sources.list.d/debian.sources ]; then
                 sed -i '/^Types:/ s/$/ deb-src/' /etc/apt/sources.list.d/debian.sources
@@ -83,7 +83,7 @@ jobs:
             apt-get install -y build-essential devscripts debhelper dh-make wget
             bash check-dsc.sh ${{ matrix.package }} ./packages ./build
             mv ./build/${{ matrix.package }}-*/ ./build/${{ matrix.package }}
-            apt build-dep -y ${{ matrix.package }}
+            # apt build-dep -y ${{ matrix.package }}
 
             echo $PWD
             ls -l $PWD
