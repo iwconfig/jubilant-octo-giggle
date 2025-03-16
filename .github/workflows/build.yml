@@ -72,6 +72,7 @@ jobs:
           host-arch: "${{ matrix.arch }}"
           source-dir: "build/${{ matrix.package }}"
           setup-hook: |
+            set -v
             if [ -f /etc/apt/sources.list.d/debian.sources ]; then
                 sed -i '/^Types:/ s/$/ deb-src/' /etc/apt/sources.list.d/debian.sources
                 cat /etc/apt/sources.list.d/debian.sources
