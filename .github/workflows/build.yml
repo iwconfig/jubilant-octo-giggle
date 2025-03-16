@@ -70,7 +70,7 @@ jobs:
         with:
           docker-image: "${{ matrix.os-version }}"
           host-arch: "${{ matrix.arch }}"
-          # source-dir: "build"
+          source-dir: "build"
           setup-hook: |
             if [ -f /etc/apt/sources.list.d/debian.sources ]; then
                 sed -i '/^Types:/ s/$/ deb-src/' /etc/apt/sources.list.d/debian.sources
@@ -85,9 +85,9 @@ jobs:
             bash check-dsc.sh ${{ matrix.package }} ./packages ./build
 
             VERSION=$(apt-cache madison pipewire | awk '{print $3}')
-            export INPUT_SOURCE_DIR="$PWD/${{ matrix.package }}-$VERSION"
+            # export INPUT_SOURCE_DIR="$PWD/${{ matrix.package }}-$VERSION"
 
-            # mv ./build/${{ matrix.package }}-*/ ./build/${{ matrix.package }}
+            mv ./build/${{ matrix.package }}-$VERSION/ ./build/${{ matrix.package }}
             # apt build-dep -y ${{ matrix.package }}
 
             echo PWD=${PWD}
