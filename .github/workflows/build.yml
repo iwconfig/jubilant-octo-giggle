@@ -21,8 +21,8 @@ jobs:
       - id: matrix_setup
         run: |
           PACKAGES=$(ls -d ${{ github.workspace }}/packages/* | xargs -n 1 basename | jq -R . | jq -s .)
-          DISTS=$(echo debian:{sid,bookworm}-slim | jq -R . | jq -s .)
-          ARCHS=$(echo amd64 arm64 | jq -R . | jq -s .)
+          DISTS=$(echo debian:{sid,bookworm}-slim | jq -R 'split(" ")')
+          ARCHS=$(echo amd64 arm64 | jq -R 'split(" ")')
           echo "build=$(
             jq -cn --argjson p "$PACKAGES" \
                    --argjson d "$DISTS" \
@@ -79,7 +79,7 @@ jobs:
             # apt-get source pipewire
             # cd pipewire-*  # Change to the downloaded source directory
             # echo "bluez5-codec-aac=enabled" >> debian/flags
-          # extra-build-deps: devscripts git dpkg-cross
+          extra-build-deps: devscripts git dpkg-cross
           before-build-hook: "dch --local ~${{ github.run_number }} 'GitHub build for PipeWire with AAC Codec'"
           buildpackage-opts: --build=binary --no-sign -d
 
