@@ -70,7 +70,7 @@ jobs:
         with:
           docker-image: "${{ matrix.os-version }}"
           host-arch: "${{ matrix.arch }}"
-          source-dir: "/github/workspace/build"
+          source-dir: "build"
           setup-hook: |
             if [ -f /etc/apt/sources.list.d/debian.sources ]; then
                 sed -i '/^Types:/ s/$/ deb-src/' /etc/apt/sources.list.d/debian.sources
@@ -85,13 +85,13 @@ jobs:
             mv ./build/${{ matrix.package }}-*/ ./build/${{ matrix.package }}
             # apt build-dep -y ${{ matrix.package }}
 
-            echo $PWD
+            echo ${PWD@A}
             ls -l $PWD
             echo ./build
             ls -l ./build
-            echo ${{ github.workspace }}/build
+            echo github.workspace/build: ${{ github.workspace }}/build
             ls -l ${{ github.workspace }}/build
-            echo ${{ inputs.source-dir }}
+            echo source-dir: ${{ inputs.source-dir }}
             ls -l ${{ inputs.source-dir }}
 
             # apt-get source pipewire
