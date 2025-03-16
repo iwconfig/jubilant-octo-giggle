@@ -96,17 +96,6 @@ jobs:
             mv -v ./build/${{ matrix.package }}-$VERSION/ ./build/${{ matrix.package }}
             # apt build-dep -y ${{ matrix.package }}
 
-            echo GITHUB_WORKSPACE: $GITHUB_WORKSPACE
-
-            echo PWD: $PWD
-            ls -l $PWD
-            echo ./build
-            ls -l ./build
-            echo github.workspace/build: ${{ github.workspace }}/build
-            ls -l ${{ github.workspace }}/build
-            echo source-dir: ${{ inputs.source-dir }}
-            ls -l ${{ inputs.source-dir }}
-
             # apt-get source pipewire
             # cd pipewire-*  # Change to the downloaded source directory
             # echo "bluez5-codec-aac=enabled" >> debian/flags
