@@ -82,18 +82,19 @@ jobs:
             fi
             cd $GITHUB_WORKSPACE
             apt-get update
-            apt-get install -y build-essential devscripts debhelper dh-make wget
+            apt-get install -y wget #build-essential devscripts debhelper dh-make
             bash check-dsc.sh ${{ matrix.package }} ./packages ./build
 
-            DEB_VERSION=$(apt-cache madison ${{ matrix.package }} | awk '{print $3}')
-            VERSION=$(echo $DEB_VERSION| cut -d'-' -f1)
+            # DEB_VERSION=$(apt-cache madison ${{ matrix.package }} | awk '{print $3}')
+            # DEB_VERSION=$(awk '/^Version: /{print $2}' ./build/)
+            # VERSION=$(echo $DEB_VERSION | cut -d'-' -f1)
 
-            echo "DEB_VERSION: $DEB_VERSION"
-            echo "VERSION: $VERSION"
+            # echo "DEB_VERSION: $DEB_VERSION"
+            # echo "VERSION: $VERSION"
 
             # export INPUT_SOURCE_DIR="$PWD/${{ matrix.package }}-$VERSION"
 
-            mv -v ./build/${{ matrix.package }}-$VERSION/ ./build/${{ matrix.package }}
+            # mv -v ./build/${{ matrix.package }}-$VERSION/ ./build/${{ matrix.package }}
             # apt build-dep -y ${{ matrix.package }}
 
             # apt-get source pipewire
