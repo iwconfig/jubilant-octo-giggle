@@ -79,10 +79,15 @@ jobs:
                 echo "deb-src https://deb.debian.org/debian/ sid main" | tee /etc/apt/sources.list
                 cat /etc/apt/sources.list
             fi
+
             apt-get update
             apt-get install -y build-essential devscripts debhelper dh-make wget
             bash check-dsc.sh ${{ matrix.package }} ./packages ./build
-            mv ./build/${{ matrix.package }}-*/ ./build/${{ matrix.package }}
+
+            VERSION=$(apt-cache madison pipewire | awk '{print $3}')
+            export SOURCE_DIR="$PWD/${{ matrix-package }}-$VERSION
+
+            # mv ./build/${{ matrix.package }}-*/ ./build/${{ matrix.package }}
             # apt build-dep -y ${{ matrix.package }}
 
             echo ${PWD@A}
