@@ -84,6 +84,11 @@ jobs:
             bash check-dsc.sh ${{ matrix.package }} ./packages ./build
             mv ./build/${{ matrix.package }}-*/ ./build/${{ matrix.package }}
             apt build-dep -y ${{ matrix.package }}
+
+            echo $PWD
+            ls -l $PWD
+            echo ./build
+            ls -l ./build
             echo ${{ github.workspace }}/build
             ls -l ${{ github.workspace }}/build
             echo ${{ inputs.source-dir }}
