@@ -108,9 +108,11 @@ else
     # # Extract the .debian.tar.* file into the build directory
     # extract_tar "$BUILD_DIR/$DEBIAN_TAR_FILE" "$BUILD_DIR"
     # echo "Extracted $DEBIAN_TAR_FILE to $BUILD_DIR"
-    head -v "$PWD/$EXISTING_DIR"/$DSC_FILE
-    head -v "$EXISTING_DIR"/$DSC_FILE
-    DEB_VERSION=$(awk '/^Version: /{print $2}' "$PWD/$EXISTING_DIR"/$DSC_FILE)
+
+    # head -v "$PWD/$EXISTING_DIR"/$DSC_FILE
+    # head -v "$EXISTING_DIR"/$DSC_FILE
+    # DEB_VERSION=$(awk '/^Version: /{print $2}' "$PWD/$EXISTING_DIR"/$DSC_FILE)
+    DEB_VERSION=1.4.1-1
     VERSION=$(echo $DEB_VERSION | cut -d'-' -f1)
 
     echo "DEB_VERSION: $DEB_VERSION"
