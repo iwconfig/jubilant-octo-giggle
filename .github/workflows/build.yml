@@ -80,7 +80,7 @@ jobs:
                 echo "deb-src https://deb.debian.org/debian/ sid main" | tee /etc/apt/sources.list
                 cat /etc/apt/sources.list
             fi
-
+            cd $GITHUB_WORKSPACE
             apt-get update
             apt-get install -y build-essential devscripts debhelper dh-make wget
             bash check-dsc.sh ${{ matrix.package }} ./packages ./build
