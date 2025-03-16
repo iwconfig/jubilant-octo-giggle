@@ -92,20 +92,20 @@ else
     mkdir -p "$BUILD_DIR"
     cd "$BUILD_DIR"
 
-    # echo "Downloading source to $BUILD_DIR"
-    # apt source $PACKAGE_NAME
+    echo "Downloading source to $BUILD_DIR"
+    apt source $PACKAGE_NAME
 
-    # Download the .debian.tar.* file
-    echo "Downloading $DEBIAN_TAR_FILE..."
-    download_file "$DEBIAN_TAR_URL" "$BUILD_DIR"
+    # # Download the .debian.tar.* file
+    # echo "Downloading $DEBIAN_TAR_FILE..."
+    # download_file "$DEBIAN_TAR_URL" "$BUILD_DIR"
 
-    # Check the downloaded .debian.tar.* file
-    if ! check_file "$BUILD_DIR/$DEBIAN_TAR_FILE" "$DEBIAN_TAR_EXPECTED_SIZE" "$DEBIAN_TAR_EXPECTED_CHECKSUM"; then
-        echo "Downloaded file $DEBIAN_TAR_FILE does not match expected size or checksum."
-        exit 1
-    fi
+    # # Check the downloaded .debian.tar.* file
+    # if ! check_file "$BUILD_DIR/$DEBIAN_TAR_FILE" "$DEBIAN_TAR_EXPECTED_SIZE" "$DEBIAN_TAR_EXPECTED_CHECKSUM"; then
+    #     echo "Downloaded file $DEBIAN_TAR_FILE does not match expected size or checksum."
+    #     exit 1
+    # fi
 
-    # Extract the .debian.tar.* file into the build directory
-    extract_tar "$BUILD_DIR/$DEBIAN_TAR_FILE" "$BUILD_DIR"
-    echo "Extracted $DEBIAN_TAR_FILE to $BUILD_DIR"
+    # # Extract the .debian.tar.* file into the build directory
+    # extract_tar "$BUILD_DIR/$DEBIAN_TAR_FILE" "$BUILD_DIR"
+    # echo "Extracted $DEBIAN_TAR_FILE to $BUILD_DIR"
 fi
