@@ -85,7 +85,7 @@ jobs:
             bash check-dsc.sh ${{ matrix.package }} ./packages ./build
 
             VERSION=$(apt-cache madison pipewire | awk '{print $3}')
-            export SOURCE_DIR="$PWD/${{ matrix-package }}-$VERSION
+            export SOURCE_DIR="$PWD/${{ matrix.package }}-$VERSION
 
             # mv ./build/${{ matrix.package }}-*/ ./build/${{ matrix.package }}
             # apt build-dep -y ${{ matrix.package }}
