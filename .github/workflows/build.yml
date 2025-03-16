@@ -70,7 +70,7 @@ jobs:
         with:
           docker-image: "${{ matrix.os-version }}"
           host-arch: "${{ matrix.arch }}"
-          source-dir: "${{ github.workspace }}/build/"
+          source-dir: "${{ github.workspace }}/build"
           setup-hook: |
             if [ -f /etc/apt/sources.list.d/debian.sources ]; then
                 sed -i '/^Types:/ s/$/ deb-src/' /etc/apt/sources.list.d/debian.sources
@@ -84,6 +84,11 @@ jobs:
             bash check-dsc.sh ${{ matrix.package }} ./packages ./build
             mv ./build/${{ matrix.package }}-*/ ./build/${{ matrix.package }}
             apt build-dep -y ${{ matrix.package }}
+            echo ${{ github.workspace }}/build
+            ls -l ${{ github.workspace }}/build
+            echo ${{ inputs.source-dir }}
+            ls -l ${{ inputs.source-dir }}
+
             # apt-get source pipewire
             # cd pipewire-*  # Change to the downloaded source directory
             # echo "bluez5-codec-aac=enabled" >> debian/flags
