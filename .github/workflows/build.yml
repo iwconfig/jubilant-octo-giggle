@@ -82,7 +82,7 @@ jobs:
             # cd pipewire-*  # Change to the downloaded source directory
             # echo "bluez5-codec-aac=enabled" >> debian/flags
           extra-build-deps: devscripts git dpkg-cross
-          before-build-hook: "dch --local ~${{ github.run_number }} 'GitHub build for PipeWire with AAC Codec'"
+          # before-build-hook: "dch --local ~${{ github.run_number }} 'GitHub build for PipeWire with AAC Codec'"rw
           buildpackage-opts: --build=binary --no-sign -d
 
       - name: Upload deb files
