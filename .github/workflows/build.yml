@@ -6,29 +6,6 @@ on:
       - "v*"
   workflow_dispatch:
 
-
-jobs:
-  setup:
-    runs-on: ubuntu-latest
-    outputs:
-      package_list_matrix: ${{ steps.package_list.outputs.packages }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - id: package_list
-        run: |
-          PACKAGES=$(ls -d ${{ github.workspace }}/packages/* | xargs -n 1 basename | jq -R . | jq -s .)
-          echo "packages=$(jq -cn --argjson packages "$PACKAGES" '{target: $packages}')" >> $GITHUB_OUTPUT
-
-  run-matrix:
-    needs: setup
-    runs-on: ubuntu-latest
-    strategy:
-      matrix: ${{ fromJson(needs.setup.outputs.package_list_matrix) }}
-    steps:
-      - run: echo ${{ matrix.package }}
-
 jobs:
   setup:
     runs-on: ubuntu-latest
