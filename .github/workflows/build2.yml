@@ -1,9 +1,13 @@
 
 # yamllint disable rule:truthy
+name: Build PipeWire with AAC Codec 2
+
 on:
-  release:
-    types:
-      - published
+  create:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
 
 permissions:
   contents: read
@@ -17,8 +21,40 @@ env:
   ARCHITECTURES: amd64 arm64
 
 jobs:
-  build:
+  setup:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }} 
+    outputs:
+      build_matrix: ${{ steps.matrix_setup.outputs.build }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - id: matrix_setup
+        run: |
+          # PACKAGES=$(ls -d ${{ github.workspace }}/packages/* | xargs -n 1 basename | jq -R . | jq -s .)
+          # DISTS=$(echo debian:{sid,bookworm}-slim | jq -R 'split(" ")')
+          # ARCHS=$(echo amd64 arm64 | jq -R 'split(" ")')
+
+          PACKAGES=$(echo pipewire | jq -R 'split(" ")')
+          DISTS=$(echo debian:sid-slim | jq -R 'split(" ")')
+          ARCHS=$(echo amd64 | jq -R 'split(" ")')
+          echo "build=$(
+            jq -cn --argjson p "$PACKAGES" \
+                   --argjson d "$DISTS" \
+                   --argjson a "$ARCHS" \
+              '{package:$p,"os-version":$d,arch:$a}'
+          )" >> $GITHUB_OUTPUT
+      
+
+  build:
+    needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.setup.outputs.build_matrix) }}
     outputs:
       artifact_id: ${{ steps.upload-artifact.outputs.artifact-id }}
       keyring: ${{ steps.create-apt-repo.outputs.keyring }}
@@ -67,7 +103,7 @@ jobs:
         id: create-apt-repo
         with:
           repo-name: ${{ env.REPO_NAME }}
-          signing-key: ${{ secrets.SIGNING_KEY }}
+          signing-key: ${{ secrets.APT_SIGNING_KEY }}
           codename: ${{ env.CODENAME }}
           components: ${{ env.COMPONENTS }}
           architectures: ${{ env.ARCHITECTURES }}
