@@ -6,23 +6,61 @@ on:
       - "v*"
   workflow_dispatch:
 
+
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      package_list_matrix: ${{ steps.package_list.outputs.packages }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - id: package_list
+        run: |
+          PACKAGES=$(ls -d ${{ github.workspace }}/packages/* | xargs -n 1 basename | jq -R . | jq -s .)
+          echo "packages=$(jq -cn --argjson packages "$PACKAGES" '{target: $packages}')" >> $GITHUB_OUTPUT
+
+  run-matrix:
+    needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.setup.outputs.package_list_matrix) }}
+    steps:
+      - run: echo ${{ matrix.package }}
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }} 
+    outputs:
+      build_matrix: ${{ steps.matrix_setup.outputs.build }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - id: matrix_setup
+        run: |
+          PACKAGES=$(ls -d ${{ github.workspace }}/packages/* | xargs -n 1 basename | jq -R . | jq -s .)
+          DISTS=$(echo debian:{sid,bookworm}-slim | jq -R . | jq -s .)
+          ARCHS=$(echo amd64 arm64 | jq -R . | jq -s .)
+          echo "build=$(
+            jq -cn --argjson p "$PACKAGES" \
+                   --argjson d "$DISTS" \
+                   --argjson a "$ARCHS" \
+              '{package:$p,"os-version":$d,arch:$a}'
+          )" >> $GITHUB_OUTPUT
+      
+
   build:
+    needs: setup
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        os-version: ["debian:sid"]
-        arch: ["amd64", "arm64"]
-
-        package: 
-          - gnome-shell-48~rc
-          - pipewire-1.4.1
-    # container:
-    #   image: ${{ matrix.os-version }}  # Use the specified Debian image as the container
+      matrix: ${{ fromJson(needs.setup.outputs.build_matrix) }}
     steps:
-      # - uses: actions/checkout@v4
-
       # - name: Set up environment
       #   run: |
       #     if [ -f /etc/apt/sources.list.d/debian.sources ]; then
@@ -34,7 +72,7 @@ jobs:
 
       #     fi
       #     apt-get update
-      #     apt-get install -y build-essential devscripts debhelper dh-make
+      #     # apt-get install -y build-essential devscripts debhelper dh-make
 
       # - name: Download PipeWire Source
       #   run: |
@@ -49,6 +87,7 @@ jobs:
         with:
           docker-image: "${{ matrix.os-version }}"
           host-arch: "${{ matrix.arch }}"
+          source-dir: "${{ github.workspace }}/build"
           setup-hook: |
             if [ -f /etc/apt/sources.list.d/debian.sources ]; then
                 sed -i '/^Types:/ s/$/ deb-src/' /etc/apt/sources.list.d/debian.sources
@@ -59,9 +98,10 @@ jobs:
             fi
             apt-get update
             apt-get install -y build-essential devscripts debhelper dh-make 
-            apt-get source pipewire
-            cd pipewire-*  # Change to the downloaded source directory
-            echo "bluez5-codec-aac=enabled" >> debian/flags
+            bash check-dsc.sh "${{ matrix.package }}" "${{ github.workspace }}/{packages,build}"
+            # apt-get source pipewire
+            # cd pipewire-*  # Change to the downloaded source directory
+            # echo "bluez5-codec-aac=enabled" >> debian/flags
           # extra-build-deps: devscripts git dpkg-cross
           before-build-hook: "dch --local ~${{ github.run_number }} 'GitHub build for PipeWire with AAC Codec'"
           buildpackage-opts: --build=binary --no-sign -d
