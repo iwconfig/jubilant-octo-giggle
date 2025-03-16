@@ -56,6 +56,8 @@ jobs:
       #     apt-get source pipewire
       #     cd pipewire-*  # Change to the downloaded source directory
       #     echo "bluez5-codec-aac=enabled" >> debian/flags
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: Build PipeWire Package
         uses: jtdor/build-deb-action@v1
