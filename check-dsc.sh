@@ -48,7 +48,7 @@ EXISTING_DIR=$2
 BUILD_DIR=$3
 
 # Update package list
-apt update
+apt -qq update
 
 SOURCE_INFO=$(apt-get -qq source --print-uris "$PACKAGE_NAME")
 
@@ -108,7 +108,8 @@ else
     # # Extract the .debian.tar.* file into the build directory
     # extract_tar "$BUILD_DIR/$DEBIAN_TAR_FILE" "$BUILD_DIR"
     # echo "Extracted $DEBIAN_TAR_FILE to $BUILD_DIR"
-
+    head -v "$PWD/$EXISTING_DIR"/$DSC_FILE
+    head -v "$EXISTING_DIR"/$DSC_FILE
     DEB_VERSION=$(awk '/^Version: /{print $2}' "$PWD/$EXISTING_DIR"/$DSC_FILE)
     VERSION=$(echo $DEB_VERSION | cut -d'-' -f1)
 

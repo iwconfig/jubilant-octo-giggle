@@ -81,8 +81,8 @@ jobs:
                 cat /etc/apt/sources.list
             fi
             cd $GITHUB_WORKSPACE
-            apt-get update
-            apt-get install -y devscripts wget #build-essential  debhelper dh-make
+            apt-get -qq update
+            apt-get -qq install -y devscripts wget #build-essential  debhelper dh-make
             bash check-dsc.sh ${{ matrix.package }} ./packages ./build
 
             # DEB_VERSION=$(apt-cache madison ${{ matrix.package }} | awk '{print $3}')
