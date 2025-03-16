@@ -90,7 +90,7 @@ jobs:
             # mv ./build/${{ matrix.package }}-*/ ./build/${{ matrix.package }}
             # apt build-dep -y ${{ matrix.package }}
 
-            echo ${PWD@A}
+            echo PWD=${PWD}
             ls -l $PWD
             echo ./build
             ls -l ./build
