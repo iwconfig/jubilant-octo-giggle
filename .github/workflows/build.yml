@@ -76,8 +76,8 @@ jobs:
                 cat /etc/apt/sources.list
             fi
             apt-get update
-            apt-get install -y build-essential devscripts debhelper dh-make 
-            bash check-dsc.sh ${{ matrix.package }} ${{ github.workspace }}/packages ${{ github.workspace }}/build
+            apt-get install -y build-essential devscripts debhelper dh-make wget
+            bash check-dsc.sh ${{ matrix.package }} ./packages ./build
             # apt-get source pipewire
             # cd pipewire-*  # Change to the downloaded source directory
             # echo "bluez5-codec-aac=enabled" >> debian/flags
