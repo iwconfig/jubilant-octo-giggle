@@ -109,7 +109,7 @@ else
     # extract_tar "$BUILD_DIR/$DEBIAN_TAR_FILE" "$BUILD_DIR"
     # echo "Extracted $DEBIAN_TAR_FILE to $BUILD_DIR"
 
-    DEB_VERSION=$(awk '/^Version: /{print $2}' "$EXISTING_DIR"/$DSC_FILE)
+    DEB_VERSION=$(awk '/^Version: /{print $2}' "$PWD/$EXISTING_DIR"/$DSC_FILE)
     VERSION=$(echo $DEB_VERSION | cut -d'-' -f1)
 
     echo "DEB_VERSION: $DEB_VERSION"
