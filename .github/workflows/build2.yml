@@ -29,8 +29,10 @@ jobs:
     outputs:
       build_matrix: ${{ steps.matrix_setup.outputs.build }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
 
       - id: matrix_setup
         run: |
@@ -49,7 +51,7 @@ jobs:
           )" >> $GITHUB_OUTPUT
       
 
-  build:
+  build_packages:
     needs: setup
     runs-on: ubuntu-latest
     strategy:
@@ -59,10 +61,7 @@ jobs:
       artifact_id: ${{ steps.upload-artifact.outputs.artifact-id }}
       keyring: ${{ steps.create-apt-repo.outputs.keyring }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
+
       # - name: Create packages
       #   run: |
       #     head -v /etc/apt/sources.list.d/debian.sources /etc/apt/sources.list
@@ -99,6 +98,13 @@ jobs:
           # before-build-hook: "dch --local ~${{ github.run_number }} 'GitHub build for PipeWire with AAC Codec'"rw
           buildpackage-opts: --build=binary --no-sign -d
 
+  build_repo:
+    needs: build_packages
+    runs-on: ubuntu-latest
+    outputs:
+      artifact_id: ${{ steps.upload-artifact.outputs.artifact-id }}
+      keyring: ${{ steps.create-apt-repo.outputs.keyring }}
+    steps:
       - uses: morph027/apt-repo-action@v2
         id: create-apt-repo
         with:
@@ -116,11 +122,11 @@ jobs:
           name: github-pages
           path: ${{ steps.create-apt-repo.outputs.dir }}
   deploy:
+    needs: build_repo
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
+      url: ${{ steps.deploy-pages.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
