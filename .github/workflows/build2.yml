@@ -98,7 +98,11 @@ jobs:
 
           extra-build-deps: devscripts git dpkg-cross
           # before-build-hook: "dch --local ~${{ github.run_number }} 'GitHub build for PipeWire with AAC Codec'"rw
-          before-build-hook: debchange --controlmaint --local "+custom" "custom"
+          before-build-hook: |
+            (
+              cd ./build/${{ matrix.package }}
+              debchange --controlmaint --local "+custom" "custom"
+            )
 
           buildpackage-opts: --build=binary --no-sign -d
 
