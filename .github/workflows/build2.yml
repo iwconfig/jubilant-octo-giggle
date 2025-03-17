@@ -51,7 +51,7 @@ jobs:
           )" >> $GITHUB_OUTPUT
       
 
-  build_packages:
+  build packages:
     needs: setup
     runs-on: ubuntu-latest
     strategy:
@@ -100,8 +100,8 @@ jobs:
           # before-build-hook: "dch --local ~${{ github.run_number }} 'GitHub build for PipeWire with AAC Codec'"rw
           buildpackage-opts: --build=binary --no-sign -d
 
-  build_repo:
-    needs: build_packages
+  build repo:
+    needs: build packages
     runs-on: ubuntu-latest
     outputs:
       artifact_id: ${{ steps.upload-artifact.outputs.artifact-id }}
@@ -118,16 +118,20 @@ jobs:
           components: ${{ env.COMPONENTS }}
           architectures: ${{ env.ARCHITECTURES }}
           import-from-repo-url: |
-            deb-amd64 https://iwconfig.github.io/${{ env.REPO_NAME }}/ ${{ env.CODENAME }} ${{ env.COMPONENTS }}
-            deb-arm64 https://iwconfig.github.io/${{ env.REPO_NAME }}/ ${{ env.CODENAME }} ${{ env.COMPONENTS }}
+            deb-amd64 https://${{ github.actor }}.github.io/${{ env.REPO_NAME }}/ ${{ env.CODENAME }} ${{ env.COMPONENTS }}
+            deb-arm64 https://${{ github.actor }}.github.io/${{ env.REPO_NAME }}/ ${{ env.CODENAME }} ${{ env.COMPONENTS }}
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           name: github-pages
           path: ${{ steps.create-apt-repo.outputs.dir }}
   deploy:
-    needs: build_repo
+    needs: build repo
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
