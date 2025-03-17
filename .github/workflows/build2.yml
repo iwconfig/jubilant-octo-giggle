@@ -42,7 +42,7 @@ jobs:
 
           PACKAGES=$(echo pipewire | jq -R 'split(" ")')
           DISTS=$(echo debian:sid-slim | jq -R 'split(" ")')
-          ARCHS=$(echo amd64 | jq -R 'split(" ")')
+          ARCHS=$(echo amd64 source | jq -R 'split(" ")')
           echo "build=$(
             jq -cn --argjson p "$PACKAGES" \
                    --argjson d "$DISTS" \
