@@ -129,6 +129,7 @@ jobs:
           import-from-repo-url: |
             deb-amd64 https://${{ github.actor }}.github.io/${{ env.REPO_NAME }}/ ${{ env.CODENAME }} ${{ env.COMPONENTS }}
             deb-arm64 https://${{ github.actor }}.github.io/${{ env.REPO_NAME }}/ ${{ env.CODENAME }} ${{ env.COMPONENTS }}
+            deb-src https://${{ github.actor }}.github.io/${{ env.REPO_NAME }}/ ${{ env.CODENAME }} ${{ env.COMPONENTS }}
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
