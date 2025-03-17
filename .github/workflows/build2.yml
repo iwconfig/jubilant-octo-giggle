@@ -107,7 +107,7 @@ jobs:
               head -n100 -v debian/control
             )
 
-          buildpackage-opts: --build=binary,source --no-sign -d
+          buildpackage-opts: --build=full --no-sign -d
 
   build_repo:
     needs: build_packages
