@@ -42,7 +42,7 @@ jobs:
 
           PACKAGES=$(echo pipewire | jq -R 'split(" ")')
           DISTS=$(echo debian:sid-slim | jq -R 'split(" ")')
-          ARCHS=$(echo amd64 source | jq -R 'split(" ")')
+          ARCHS=$(echo amd64 | jq -R 'split(" ")')
           echo "build=$(
             jq -cn --argjson p "$PACKAGES" \
                    --argjson d "$DISTS" \
@@ -102,7 +102,7 @@ jobs:
             (
               cd ./build/${{ matrix.package }}
               head -n100 -v debian/changelog
-              debchange --controlmaint --local "+custom" "custom"
+              debchange --local "+custom" "custom"
               head -n100 -v debian/changelog
               head -n100 -v debian/control
             )
