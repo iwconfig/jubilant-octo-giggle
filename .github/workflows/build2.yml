@@ -151,9 +151,15 @@ jobs:
         uses: actions/deploy-pages@v4
       - name: Adding summary
         run: |
+          DOMAIN=$(echo "${{ steps.deployment.outputs.page_url }}" | awk -F/ '{print $3}')
           echo ':rocket:' >> $GITHUB_STEP_SUMMARY
           echo '' >> $GITHUB_STEP_SUMMARY
           echo '```bash' >> $GITHUB_STEP_SUMMARY
           echo 'curl -sfLo /etc/apt/trusted.gpg.d/${{ needs.build_repo.outputs.keyring }}.asc ${{ steps.deployment.outputs.page_url }}gpg.key' >> $GITHUB_STEP_SUMMARY
           echo "printf '%s ${{ steps.deployment.outputs.page_url }} ${{ env.CODENAME }} ${{ env.COMPONENTS }}\n' deb deb-src >/etc/apt/sources.list.d/${{ env.REPO_NAME }}.list" >> $GITHUB_STEP_SUMMARY
+          echo 'cat << EOF > /etc/apt/preferences.d/${{ env.REPO_NAME }}.conf
+          Package: *
+          Pin: origin $DOMAIN
+          Pin-Priority: 1001
+          EOF' >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
