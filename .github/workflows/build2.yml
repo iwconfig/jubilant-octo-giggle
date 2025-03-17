@@ -102,7 +102,7 @@ jobs:
             (
               cd ./build/${{ matrix.package }}
               head -n100 -v debian/changelog
-              debchange --local "+custom" "custom"
+              debchange --append --local "+custom" "custom"
               head -n100 -v debian/changelog
               head -n100 -v debian/control
             )
