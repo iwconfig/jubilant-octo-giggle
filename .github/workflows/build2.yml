@@ -101,10 +101,13 @@ jobs:
           before-build-hook: |
             (
               cd ./build/${{ matrix.package }}
+              head -n100 -v debian/changelog
               debchange --controlmaint --local "+custom" "custom"
+              head -n100 -v debian/changelog
+              head -n100 -v debian/control
             )
 
-          buildpackage-opts: --build=binary --no-sign -d
+          buildpackage-opts: --build=binary,source --no-sign -d
 
   build_repo:
     needs: build_packages
