@@ -61,6 +61,8 @@ jobs:
       artifact_id: ${{ steps.upload-artifact.outputs.artifact-id }}
       keyring: ${{ steps.create-apt-repo.outputs.keyring }}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       # - name: Create packages
       #   run: |
@@ -105,6 +107,8 @@ jobs:
       artifact_id: ${{ steps.upload-artifact.outputs.artifact-id }}
       keyring: ${{ steps.create-apt-repo.outputs.keyring }}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - uses: morph027/apt-repo-action@v2
         id: create-apt-repo
         with:
