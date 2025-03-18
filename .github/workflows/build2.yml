@@ -133,7 +133,7 @@ jobs:
           pattern: built-package-artifacts
           path: artifacts
 
-      - uses: morph027/apt-repo-action@v2
+      - uses: iwconfig/apt-repo-action@main
         id: create-apt-repo
         with:
           scan-dir: artifacts
