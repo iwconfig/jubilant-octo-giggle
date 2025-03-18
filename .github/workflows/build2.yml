@@ -111,7 +111,7 @@ jobs:
 
           buildpackage-opts: --build=full --no-sign -d -nc --changes-option=-sd #-v+custom
       - name: Upload Built Packages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           name: built-package-artifacts
           # path: ${{ steps.build-deb-action.outputs.artifacts }}
@@ -128,9 +128,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
-          name: built-package-artifacts
+          pattern: built-package-artifacts
           path: artifacts
 
       - uses: morph027/apt-repo-action@v2
@@ -148,7 +148,7 @@ jobs:
           #   deb-src https://${{ github.actor }}.github.io/${{ env.REPO_NAME }}/ ${{ env.CODENAME }} ${{ env.COMPONENTS }}
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           name: github-pages
           path: ${{ steps.create-apt-repo.outputs.dir }}
