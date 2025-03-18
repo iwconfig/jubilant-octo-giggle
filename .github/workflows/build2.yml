@@ -102,12 +102,12 @@ jobs:
             (
               cd ./build/${{ matrix.package }}
               head -n100 -v debian/changelog
-              debchange --append --controlmaint --local "+custom" "custom"
+              debchange --append --controlmaint --local "~custom" "custom"
               head -n100 -v debian/changelog
               head -n100 -v debian/control
             )
 
-          buildpackage-opts: --build=full --no-sign -d -nc --changes-option=-sd -v+custom
+          buildpackage-opts: --build=full --no-sign -d -nc --changes-option=-sd #-v+custom
 
   build_repo:
     needs: build_packages
