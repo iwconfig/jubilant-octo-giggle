@@ -108,6 +108,11 @@ jobs:
             )
 
           buildpackage-opts: --build=full --no-sign -d
+      - name: Upload changelog artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: changelog
+          path: ./build/${{ matrix.package }}/debian/changelog
 
   build_repo:
     needs: build_packages
@@ -118,6 +123,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Download changelog artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: changelog
+
       - uses: morph027/apt-repo-action@v2
         id: create-apt-repo
         with:
@@ -159,7 +170,7 @@ jobs:
           echo "printf '%s ${{ steps.deployment.outputs.page_url }} ${{ env.CODENAME }} ${{ env.COMPONENTS }}\n' deb deb-src >/etc/apt/sources.list.d/${{ env.REPO_NAME }}.list" >> $GITHUB_STEP_SUMMARY
           echo 'cat << EOF > /etc/apt/preferences.d/${{ env.REPO_NAME }}.conf
           Package: *
-          Pin: origin $DOMAIN
+          Pin: origin '$DOMAIN'
           Pin-Priority: 1001
           EOF' >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
