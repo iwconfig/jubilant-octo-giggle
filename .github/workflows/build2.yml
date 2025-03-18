@@ -113,7 +113,7 @@ jobs:
       - name: Upload Built Packages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          name: built-packages
+          name: built-package-artifacts
           # path: ${{ steps.build-deb-action.outputs.artifacts }}
           path: ./artifacts
 
@@ -130,7 +130,7 @@ jobs:
       - name: Download build artifacts
         uses: actions/download-artifact@v3
         with:
-          name: built-packages #built-package-artifacts
+          name: built-package-artifacts
           path: artifacts
 
       - uses: morph027/apt-repo-action@v2
