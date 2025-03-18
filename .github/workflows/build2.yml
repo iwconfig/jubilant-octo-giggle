@@ -108,6 +108,10 @@ jobs:
             )
 
           buildpackage-opts: --build=full --no-sign -d
+      - name: Check if changelog exists
+        run: |
+          ls -l ./build/${{ matrix.package }}/debian/changelog
+  
       - name: Upload changelog artifact
         uses: actions/upload-artifact@v3
         with:
@@ -142,10 +146,6 @@ jobs:
             deb-arm64 https://${{ github.actor }}.github.io/${{ env.REPO_NAME }}/ ${{ env.CODENAME }} ${{ env.COMPONENTS }}
             deb-src https://${{ github.actor }}.github.io/${{ env.REPO_NAME }}/ ${{ env.CODENAME }} ${{ env.COMPONENTS }}
 
-      - name: Check if changelog exists
-        run: |
-          ls -l ./build/${{ matrix.package }}/debian/changelog
-    
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
