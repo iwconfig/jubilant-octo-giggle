@@ -78,7 +78,7 @@ jobs:
           docker-image: "${{ matrix.os-version }}"
           host-arch: "${{ matrix.arch }}"
           source-dir: "build/${{ matrix.package }}"
-          artifacts-dir: "build/${{ matrix.package }}/artifacts"
+          artifacts-dir: "artifacts"
           setup-hook: |
             set -v
             if [ -f /etc/apt/sources.list.d/debian.sources ]; then
@@ -113,26 +113,21 @@ jobs:
       - name: Upload Built Packages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          name: built-packages
+          name: github-pages
           # path: ${{ steps.build-deb-action.outputs.artifacts }}
-          path: ./build/${{ matrix.package }}/artifacts
+          path: ./artifacts
 
   build_repo:
     needs: build_packages
     runs-on: ubuntu-latest
     environment:
-      name: built-packages
+      name: github-pages
     outputs:
       artifact_id: ${{ steps.upload-artifact.outputs.artifact-id }}
       keyring: ${{ steps.create-apt-repo.outputs.keyring }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      # - name: Download Built Packages artifact
-      #   uses: actions/download-artifact@v2
-      #   with:
-      #     name: built-packages
 
       - uses: morph027/apt-repo-action@v2
         id: create-apt-repo
