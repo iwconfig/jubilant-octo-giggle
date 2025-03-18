@@ -114,8 +114,8 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           name: built-packages
-          path: ${{ steps.build-deb-action.outputs.artifacts }}
-          # path: ./artifacts
+          # path: ${{ steps.build-deb-action.outputs.artifacts }}
+          path: ./artifacts
 
   build_repo:
     needs: build_packages
@@ -131,11 +131,12 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build-packages
-          path: ./
+          path: artifacts
 
       - uses: morph027/apt-repo-action@v2
         id: create-apt-repo
         with:
+          scan-dir: artifacts
           repo-name: ${{ env.REPO_NAME }}
           signing-key: ${{ secrets.APT_SIGNING_KEY }}
           codename: ${{ env.CODENAME }}
