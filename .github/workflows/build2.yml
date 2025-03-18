@@ -107,16 +107,7 @@ jobs:
               head -n100 -v debian/control
             )
 
-          buildpackage-opts: --build=full --no-sign -d
-      - name: Check if changelog exists
-        run: |
-          ls -l ./build/${{ matrix.package }}/debian/changelog
-  
-      - name: Upload changelog artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: changelog
-          path: ./build/${{ matrix.package }}/debian/changelog
+          buildpackage-opts: --build=full --no-sign -d -nc
 
   build_repo:
     needs: build_packages
@@ -127,11 +118,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Download changelog artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: changelog
 
       - uses: morph027/apt-repo-action@v2
         id: create-apt-repo
