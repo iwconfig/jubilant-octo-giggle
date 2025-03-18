@@ -71,12 +71,14 @@ jobs:
 
       - name: Build ${{ matrix.package }} Package
         uses: jtdor/build-deb-action@v1
+        id: build-deb-action
         env:
           DEB_BUILD_OPTIONS: noautodbgsym
         with:
           docker-image: "${{ matrix.os-version }}"
           host-arch: "${{ matrix.arch }}"
           source-dir: "build/${{ matrix.package }}"
+          artifacts-dir: "build/${{ matrix.package }}/artifacts"
           setup-hook: |
             set -v
             if [ -f /etc/apt/sources.list.d/debian.sources ]; then
@@ -102,12 +104,17 @@ jobs:
             (
               cd ./build/${{ matrix.package }}
               head -n100 -v debian/changelog
-              debchange --append --controlmaint "~custom" "custom"
+              debchange --append --controlmaint "+custom" "custom"
               head -n100 -v debian/changelog
               head -n100 -v debian/control
             )
 
           buildpackage-opts: --build=full --no-sign -d -nc --changes-option=-sd #-v+custom
+      - name: Upload Built Packages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          name: built-packages
+          path: ${{ steps.build-deb-action.outputs.artifacts }}
 
   build_repo:
     needs: build_packages
@@ -118,6 +125,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Download Built Packages artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: built-packages
 
       - uses: morph027/apt-repo-action@v2
         id: create-apt-repo
@@ -137,6 +149,7 @@ jobs:
         with:
           name: github-pages
           path: ${{ steps.create-apt-repo.outputs.dir }}
+
   deploy:
     needs: build_repo
     runs-on: ubuntu-latest
