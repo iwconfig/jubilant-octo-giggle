@@ -114,7 +114,8 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           name: built-packages
-          path: ${{ steps.build-deb-action.outputs.artifacts }}
+          # path: ${{ steps.build-deb-action.outputs.artifacts }}
+          path: ./build/${{ matrix.package }}/artifacts
 
   build_repo:
     needs: build_packages
